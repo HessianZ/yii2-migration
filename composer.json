@@ -1,5 +1,5 @@
 {
-  "name": "bizley/migration",
+  "name": "hessian/migration",
   "description": "Migration generator for Yii 2.",
   "type": "yii2-extension",
   "keywords": ["yii2", "migration", "migrate", "generator", "updater", "console"],
@@ -8,6 +8,10 @@
     {
       "name": "Paweł Bizley Brzozowski",
       "email": "pawel@positive.codes"
+    },
+    {
+      "name": "Hessian",
+      "email": "hess.4x@gmail.com"
     }
   ],
   "support": {
