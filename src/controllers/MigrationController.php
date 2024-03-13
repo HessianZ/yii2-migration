@@ -289,6 +289,8 @@ class MigrationController extends BaseMigrationController
             return ExitCode::OK;
         }
 
+        /** @var Connection $db */
+        $db = $this->db;
         $countTables = \count($inputTables);
         $referencesToPostpone = [];
         $tables = $inputTables;
@@ -298,8 +300,6 @@ class MigrationController extends BaseMigrationController
             $tables = $arranger->getTablesInOrder();
             $referencesToPostpone = $arranger->getReferencesToPostpone();
 
-            /** @var Connection $db */
-            $db = $this->db;
             if (!empty($referencesToPostpone) && Schema::isSQLite($db->getSchema())) {
                 $this->stdout(
                     "\nERROR!\n > Generating migrations for provided tables in batch is not possible because 'ADD FOREIGN KEY' is not supported by SQLite!\n",
