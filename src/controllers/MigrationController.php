@@ -463,6 +463,8 @@ class MigrationController extends BaseMigrationController
             return ExitCode::OK;
         }
 
+        /** @var Connection $db */
+        $db = $this->db;
         $countTables = \count($newTables);
         $referencesToPostpone = [];
         if ($countTables > 1) {
@@ -471,8 +473,6 @@ class MigrationController extends BaseMigrationController
             $newTables = $arranger->getTablesInOrder();
             $referencesToPostpone = $arranger->getReferencesToPostpone();
 
-            /** @var Connection $db */
-            $db = $this->db;
             if (!empty($referencesToPostpone) && Schema::isSQLite($db->getSchema())) {
                 $this->stdout(
                     "ERROR!\n > Generating migrations for provided tables in batch is not possible "
@@ -500,6 +500,12 @@ class MigrationController extends BaseMigrationController
         foreach ($newTables as $tableName) {
             $this->stdout("\n > Generating migration for creating table '{$tableName}' ...", BaseConsole::FG_YELLOW);
 
+            $tableNameWithoutPrefix = $tableName;
+            if ($db->tablePrefix) {
+                $tableNameWithoutPrefix = preg_replace("/^$db->tablePrefix/", '', $tableName);
+            }
+            $normalizedTableName = \str_replace('.', '_', $tableNameWithoutPrefix);
+
             $timestamp = time();
             if ($timestamp <= $lastUsedTimestamp) {
                 $timestamp = ++$lastUsedTimestamp;
@@ -512,7 +518,7 @@ class MigrationController extends BaseMigrationController
                     \sprintf(
                         "m%s_create_table_%s",
                         \gmdate('ymd_His', $timestamp),
-                        \str_replace('.', '_', $tableName)
+                        $normalizedTableName
                     ),
                     $referencesToPostpone
                 );
